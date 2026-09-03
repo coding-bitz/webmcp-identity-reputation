@@ -17,10 +17,16 @@ export async function sendOtpEmail(otp: string, agentId: string): Promise<void> 
 
   const resend = new Resend(apiKey);
 
-  await resend.emails.send({
-    from: 'WebMCP Identity Passport <onboarding@resend.dev>',
+  const fromAddress = process.env.RESEND_FROM_EMAIL || 'WebMCP Identity Passport <onboarding@resend.dev>';
+
+  const { data, error } = await resend.emails.send({
+    from: fromAddress,
     to: recipients,
     subject: `Your WebMCP authentication code: ${otp}`,
     text: `Agent "${agentId}" is requesting authentication.\n\nOne-time code: ${otp}\n\nThis code expires in 5 minutes and can only be used once.`,
   });
+
+  if (error) {
+    throw new Error(`Resend rejected the email: ${error.message}`);
+  }
 }
