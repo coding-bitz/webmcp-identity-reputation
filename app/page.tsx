@@ -27,19 +27,16 @@ export default function HomePage() {
         const data = await res.json();
         if (data.agents) {
           setAgents(data.agents);
-          setActiveAgentId((prev) => {
-            if (data.agents.length > 0 && !data.agents.some((a: any) => a.agentId === prev)) {
-              return data.agents[0].agentId;
-            }
-            return prev;
-          });
+          if (data.agents.length > 0 && !data.agents.some((a: any) => a.agentId === activeAgentId)) {
+            setActiveAgentId(data.agents[0].agentId);
+          }
         }
         if (data.products) setProducts(data.products);
       }
     } catch (err) {
       console.error('Failed to sync state:', err);
     }
-  }, []);
+  }, [setActiveAgentId]);
 
   // WebMCP Tool Registration & Lifecycle
   useEffect(() => {
