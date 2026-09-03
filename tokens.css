@@ -1,0 +1,47 @@
+/* Hallmark · macrostructure: Stat-Led · theme: studied-DNA · studied: yes · DNA-source: url
+ * source-url: https://v0-saa-s-landing-page-seven-gules-t092hw9a5o.vercel.app/
+ * observed-fonts: GeistPixelLine + Inter + JetBrains Mono
+ * observed-accent: #00bd8f (oklch(72.5% 0.160 162)) · rhythm: unknown (URL mode)
+ */
+
+:root {
+  /* Surfaces & Backgrounds */
+  --color-paper:       #010204; /* Void Black */
+  --color-paper-2:     #03060d; /* Card Navy-Black */
+  --color-paper-3:     #0c121a; /* Elevated Surface / Secondary */
+  --color-ink:         #e9f0f5; /* Foreground White */
+  --color-ink-2:       #718391; /* Muted Slate */
+  --color-rule:        #1c222b; /* Hairline Border */
+  
+  /* Primary & Accent Accoutrements */
+  --color-accent:      #00bd8f; /* Emerald / Mint Accent */
+  --color-accent-ink:  #010204; /* Dark contrast ink for accent buttons */
+  --color-accent-sub:  #3aa85b; /* Leaf Green Sub-accent */
+  --color-focus:       #00bd8f; /* Focus Ring */
+  --color-destructive: #fb2c36; /* Crimson warning/penalty */
+
+  /* Radii */
+  --radius-card:       0.75rem; /* 12px */
+  --radius-input:      0.5rem;  /* 8px */
+  --radius-pill:       9999px;
+
+  /* 4-pt Spacing Scale */
+  --space-3xs: 0.25rem;  /* 4px */
+  --space-2xs: 0.5rem;   /* 8px */
+  --space-xs:  0.75rem;  /* 12px */
+  --space-sm:  1rem;     /* 16px */
+  --space-md:  1.5rem;   /* 24px */
+  --space-lg:  2rem;     /* 32px */
+  --space-xl:  3rem;     /* 48px */
+  --space-2xl: 4rem;     /* 64px */
+  --space-3xl: 6rem;     /* 96px */
+  --space-4xl: 8rem;     /* 128px */
+
+  /* Timing & Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 180ms;
+  --dur-base: 240ms;
+  --dur-slow: 320ms;
+}
