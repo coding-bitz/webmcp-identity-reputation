@@ -27,10 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({ webMcpAvailable, onResetDemo, is
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-base sm:text-lg tracking-tight text-ink group-hover:text-accent transition-colors">
-                WebMCP Identity Passport
-              </span>
-              <span className="px-1.5 py-0.5 text-[10px] font-mono rounded bg-accent/15 text-accent border border-accent/30">
-                v1.0-DEMO
+                WebMCP Identity and Reputation Layer
               </span>
             </div>
             <p className="text-xs text-ink-2 font-mono hidden sm:block">

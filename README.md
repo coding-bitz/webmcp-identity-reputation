@@ -142,7 +142,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ## 7. What's next
 
 The next step is moving the authentication layer toward a more robust scheme, aligned with 2FA compliance standards. But the central focus of the project remains identity and reputation per agent, and there's a fundamental decision still pending: should this be administered by a centralized provider, or should it be a public, auditable registry? This isn't a decision we'll make out of preference for any particular technology, but with an eye toward what format could become a standard the industry shares. The full detail of this roadmap is in [`spec.md`](./spec.md).
-# WebMCP Identity Passport
+# WebMCP Identity and Reputation Layer
 
 **WebMCP-native identity, Email OTP authentication, deterministic reputation, and independent rate-limiting layer for autonomous AI agents.**
 
@@ -154,7 +154,7 @@ WebMCP allows websites to expose application actions directly to AI agents (such
 
 > *"Who is this agent, and should I trust it with high-privilege operations?"*
 
-**WebMCP Identity Passport** solves this by establishing persistent, human-verified agent identities using a two-phase Email OTP handshake. Rather than treating automated agents as anonymous browser sessions or relying on brittle IP heuristics, the website verifies the agent's identity code, maintains an auditable action history, computes a deterministic reputation score, and enforces per-agent rate limits.
+**WebMCP Identity and Reputation Layer** solves this by establishing persistent, human-verified agent identities using a two-phase Email OTP handshake. Rather than treating automated agents as anonymous browser sessions or relying on brittle IP heuristics, the website verifies the agent's identity code, maintains an auditable action history, computes a deterministic reputation score, and enforces per-agent rate limits.
 
 ---
 

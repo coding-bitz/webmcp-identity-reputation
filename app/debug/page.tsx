@@ -21,15 +21,22 @@ export default function DebugPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isResetting, setIsResetting] = useState<boolean>(false);
 
-  const refreshState = useCallback(async () => {
+  const refreshState = useCallback(async (targetAgentId?: string) => {
     try {
       const res = await fetch('/api/system/state');
       if (res.ok) {
         const data = await res.json();
         if (data.agents) {
           setAgents(data.agents);
-          if (data.agents.length > 0 && !data.agents.some((a: any) => a.agentId === activeAgentId)) {
-            setActiveAgentId(data.agents[0].agentId);
+          if (targetAgentId) {
+            setActiveAgentId(targetAgentId);
+          } else {
+            setActiveAgentId((prev) => {
+              if (data.agents.length > 0 && !data.agents.some((a: any) => a.agentId === prev)) {
+                return data.agents[0].agentId;
+              }
+              return prev;
+            });
           }
         }
         if (data.events) setEvents(data.events);
@@ -38,7 +45,7 @@ export default function DebugPage() {
     } catch (err) {
       console.error('Failed to sync state:', err);
     }
-  }, [setActiveAgentId]);
+  }, []);
 
   useEffect(() => {
     refreshState();
@@ -96,6 +103,9 @@ export default function DebugPage() {
             throw error;
           }
           if (data.authenticated) {
+            if (data.agentId) {
+              setActiveAgentId(data.agentId);
+            }
             setActiveSession({
               sessionId: data.sessionId,
               agentId: data.agentId,
@@ -104,7 +114,7 @@ export default function DebugPage() {
               expiresAt: data.expiresAt,
             });
           }
-          await refreshState();
+          await refreshState(data.agentId);
           return data;
         } else if (toolName === 'get_agent_profile') {
           const res = await fetch(`/api/agents/${encodeURIComponent(params.agentId || activeAgentId)}/profile`);

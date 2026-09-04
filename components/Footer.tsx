@@ -16,7 +16,7 @@ export const Footer: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm tracking-tight text-ink">
-                WebMCP Identity Passport
+                WebMCP Identity and Reputation Layer
               </span>
               <span className="text-rule">|</span>
               <span className="text-xs text-ink-2 font-mono">

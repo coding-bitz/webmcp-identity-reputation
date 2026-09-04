@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   const startTime = Date.now();
   try {
     const body = await req.json().catch(() => ({}));
-    const { agentId, otp } = body;
+    const { agentId, otp, email } = body;
 
     if (!agentId || typeof agentId !== 'string') {
       return NextResponse.json(
@@ -29,14 +29,16 @@ export async function POST(req: NextRequest) {
       const generatedOtp = generateOtp();
       store.createOtpChallenge(agentId, generatedOtp);
 
+      const targetEmail = typeof email === 'string' && email.trim() ? email.trim() : undefined;
+
       try {
-        await sendOtpEmail(generatedOtp, agentId);
+        await sendOtpEmail(generatedOtp, agentId, targetEmail);
       } catch (emailErr: any) {
         console.error('[WebMCP Auth] Resend email send failed:', emailErr?.message);
         return NextResponse.json(
           {
             error: 'Failed to send authentication code. Try again.',
-            message: 'Email dispatch failed. Ensure RESEND_API_KEY and OTP_RECIPIENT_EMAILS are configured.',
+            message: `Email dispatch failed: ${emailErr?.message || 'Ensure RESEND_API_KEY is configured.'}`,
           },
           { status: 500 }
         );
@@ -51,13 +53,16 @@ export async function POST(req: NextRequest) {
         timestamp: new Date().toISOString(),
         reputationDelta: 0,
         latencyMs: Date.now() - startTime,
-        details: { step: 'otp_dispatched_to_email' },
+        details: { step: 'otp_dispatched_to_email', recipientEmail: targetEmail || 'default_env_recipient' },
       });
 
       return NextResponse.json({
         status: 'OTP_SENT',
-        message: 'Authentication code sent to registered email. Provide the 6-digit code to complete authentication.',
+        message: targetEmail
+          ? `Authentication code sent to ${targetEmail}. Provide the 6-digit code to complete authentication.`
+          : 'Authentication code sent to registered email. Provide the 6-digit code to complete authentication.',
         agentId,
+        email: targetEmail,
       });
     }
 
