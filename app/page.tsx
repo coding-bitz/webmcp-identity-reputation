@@ -20,15 +20,22 @@ export default function HomePage() {
   const [isResetting, setIsResetting] = useState<boolean>(false);
 
   // Fetch full system state
-  const refreshState = useCallback(async () => {
+  const refreshState = useCallback(async (targetAgentId?: string) => {
     try {
       const res = await fetch('/api/system/state');
       if (res.ok) {
         const data = await res.json();
         if (data.agents) {
           setAgents(data.agents);
-          if (data.agents.length > 0 && !data.agents.some((a: any) => a.agentId === activeAgentId)) {
-            setActiveAgentId(data.agents[0].agentId);
+          if (targetAgentId) {
+            setActiveAgentId(targetAgentId);
+          } else {
+            setActiveAgentId((prev) => {
+              if (data.agents.length > 0 && !data.agents.some((a: any) => a.agentId === prev)) {
+                return data.agents[0].agentId;
+              }
+              return prev;
+            });
           }
         }
         if (data.products) setProducts(data.products);
@@ -36,7 +43,7 @@ export default function HomePage() {
     } catch (err) {
       console.error('Failed to sync state:', err);
     }
-  }, [setActiveAgentId]);
+  }, []);
 
   // WebMCP Tool Registration & Lifecycle
   useEffect(() => {
@@ -50,14 +57,24 @@ export default function HomePage() {
       if (toolName === 'authenticate_agent') {
         if (result?.status === 'OTP_SENT') {
           // Screen 2: Code sent
+          const targetId = result.agentId || input?.agentId;
+          if (targetId) {
+            setActiveAgentId(targetId);
+          }
           setAuthFlowState('CODE_SENT');
-          setAuthStatusMessage('Authentication code dispatched to your email.');
-          refreshState();
+          setAuthStatusMessage(
+            result.message || (input?.email ? `Authentication code dispatched to ${input.email}.` : 'Authentication code dispatched to your email.')
+          );
+          refreshState(targetId);
         } else if (result?.authenticated) {
+          const authAgentId = result.agentId || input?.agentId;
+          if (authAgentId) {
+            setActiveAgentId(authAgentId);
+          }
           if (result.token) {
             setActiveSession({
               sessionId: result.sessionId,
-              agentId: result.agentId,
+              agentId: authAgentId || result.agentId,
               token: result.token,
               authenticatedAt: new Date().toISOString(),
               expiresAt: result.expiresAt,
@@ -66,7 +83,7 @@ export default function HomePage() {
           setAuthStatusMessage('');
 
           // Fetch fresh agent data FIRST, then reveal
-          refreshState().then(() => {
+          refreshState(authAgentId).then(() => {
             setAuthFlowState('REVEALING');
             setTimeout(() => {
               setAuthFlowState('AUTHENTICATED');
@@ -109,9 +126,11 @@ export default function HomePage() {
         throw new Error(data.message || data.error);
       }
 
+      const targetId = data.agentId || activeAgentId;
+      setActiveAgentId(targetId);
       setAuthFlowState('CODE_SENT');
       setAuthStatusMessage('Code sent to your email. Check your inbox.');
-      await refreshState();
+      await refreshState(targetId);
       return data;
     } catch (err: any) {
       setAuthFlowState('FAILED');
@@ -145,9 +164,12 @@ export default function HomePage() {
           throw error;
         }
 
+        const authenticatedId = data.agentId || activeAgentId;
+        setActiveAgentId(authenticatedId);
+
         const session: AgentSession = {
           sessionId: data.sessionId,
-          agentId: activeAgentId,
+          agentId: authenticatedId,
           token: data.token,
           authenticatedAt: new Date().toISOString(),
           expiresAt: data.expiresAt,
@@ -156,7 +178,7 @@ export default function HomePage() {
         setAuthStatusMessage('');
 
         // Fetch fresh agent data FIRST, then reveal
-        await refreshState();
+        await refreshState(authenticatedId);
         setAuthFlowState('REVEALING');
 
         setTimeout(() => {
@@ -180,8 +202,9 @@ export default function HomePage() {
     async (query: string = 'LiDAR') => {
       setIsLoading(true);
       try {
+        const targetId = activeSession?.agentId || activeAgentId;
         const payload: any = {
-          agentId: activeAgentId,
+          agentId: targetId,
           query,
           actionType: 'search_catalog',
           token: activeSession?.token,
@@ -197,7 +220,7 @@ export default function HomePage() {
         });
 
         const data = await res.json();
-        await refreshState();
+        await refreshState(targetId);
         if (!res.ok) {
           const error: any = new Error(data.message || data.error || 'Action failed');
           error.status = res.status;
@@ -223,16 +246,18 @@ export default function HomePage() {
       });
       if (res.ok) {
         setActiveSession(null);
+        setActiveAgentId('agent_research_001');
         setAuthFlowState('WAITING_FOR_CODE');
         setAuthStatusMessage('');
-        await refreshState();
+        await refreshState('agent_research_001');
       }
     } finally {
       setIsResetting(false);
     }
   }, [refreshState]);
 
-  const currentAgent = agents.find((a) => a.agentId === activeAgentId) || agents[0];
+  const authenticatedAgentId = activeSession?.agentId || activeAgentId;
+  const currentAgent = agents.find((a) => a.agentId === authenticatedAgentId) || agents[0];
 
   return (
     <div className="min-h-screen bg-paper text-ink flex flex-col selection:bg-accent/30 selection:text-ink">

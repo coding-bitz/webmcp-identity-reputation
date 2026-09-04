@@ -17,9 +17,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WebMCP Identity Passport · Agent Trust & Reputation Layer",
+  title: "WebMCP Identity and Reputation Layer",
   description: "WebMCP-native identity, Email OTP authentication, deterministic reputation, and independent rate-limiting layer for AI agents.",
-  keywords: ["WebMCP", "AI Agents", "Identity Passport", "Email OTP", "Agent Reputation", "ChatGPT WebMCP", "AI Security"],
+  keywords: ["WebMCP", "AI Agents", "Identity and Reputation Layer", "Email OTP", "Agent Reputation", "ChatGPT WebMCP", "AI Security"],
   authors: [{ name: "WebMCP Identity Standards" }],
 };
 

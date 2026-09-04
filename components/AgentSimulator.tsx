@@ -23,6 +23,7 @@ export const AgentSimulator: React.FC<AgentSimulatorProps> = ({
 }) => {
   const [selectedTool, setSelectedTool] = useState<string>('authenticate_agent');
   const [customOtp, setCustomOtp] = useState<string>('');
+  const [customEmail, setCustomEmail] = useState<string>('');
   const [customQuery, setCustomQuery] = useState<string>('LiDAR sensor');
   const [executionLog, setExecutionLog] = useState<{
     tool: string;
@@ -46,7 +47,10 @@ export const AgentSimulator: React.FC<AgentSimulatorProps> = ({
           // If OTP is typed in box, verify it; otherwise request code
           params = customOtp.trim()
             ? { agentId: activeAgentId, otp: customOtp.trim() }
-            : { agentId: activeAgentId };
+            : {
+                agentId: activeAgentId,
+                ...(customEmail.trim() ? { email: customEmail.trim() } : {}),
+              };
         } else if (toolName === 'get_agent_profile') {
           params = { agentId: activeAgentId };
         } else if (toolName === 'perform_demo_action') {
@@ -253,18 +257,32 @@ export const AgentSimulator: React.FC<AgentSimulatorProps> = ({
 
             {/* Parameter Fields */}
             {selectedTool === 'authenticate_agent' && (
-              <div className="pt-2 border-t border-rule space-y-2">
-                <label className="text-xs font-mono text-ink-2 uppercase block">
-                  Optional OTP Code (leave empty to request code):
-                </label>
-                <input
-                  type="text"
-                  maxLength={6}
-                  value={customOtp}
-                  onChange={(e) => setCustomOtp(e.target.value.replace(/\D/g, ''))}
-                  placeholder="e.g. 482913 (or leave blank to request)"
-                  className="w-full px-3 py-2 bg-paper-2 border border-rule rounded-md text-xs font-mono text-ink focus:outline-none focus:border-accent"
-                />
+              <div className="pt-2 border-t border-rule space-y-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-mono text-ink-2 uppercase block">
+                    Recipient Email (optional, defaults to server recipient):
+                  </label>
+                  <input
+                    type="email"
+                    value={customEmail}
+                    onChange={(e) => setCustomEmail(e.target.value)}
+                    placeholder="e.g. test@test.com"
+                    className="w-full px-3 py-2 bg-paper-2 border border-rule rounded-md text-xs font-mono text-ink focus:outline-none focus:border-accent"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-mono text-ink-2 uppercase block">
+                    Optional OTP Code (leave empty to request code):
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={customOtp}
+                    onChange={(e) => setCustomOtp(e.target.value.replace(/\D/g, ''))}
+                    placeholder="e.g. 482913 (or leave blank to request)"
+                    className="w-full px-3 py-2 bg-paper-2 border border-rule rounded-md text-xs font-mono text-ink focus:outline-none focus:border-accent"
+                  />
+                </div>
               </div>
             )}
 

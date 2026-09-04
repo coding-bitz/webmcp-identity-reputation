@@ -16,6 +16,10 @@ export const WEBMCP_TOOLS: WebMCPToolDefinition[] = [
           type: 'string',
           description: 'The persistent agent identifier to authenticate as',
         },
+        email: {
+          type: 'string',
+          description: 'The email address where the 6-digit verification code will be sent. Omit to use the registered default.',
+        },
         otp: {
           type: 'string',
           description: 'The 6-digit one-time code received via email. Omit this field on the first call to request a code; include it on the second call to complete authentication.',
@@ -23,7 +27,7 @@ export const WEBMCP_TOOLS: WebMCPToolDefinition[] = [
       },
       required: ['agentId'],
     },
-    handler: async (input: { agentId: string; otp?: string }) => {
+    handler: async (input: { agentId: string; otp?: string; email?: string }) => {
       const res = await fetch('/api/auth/authenticate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

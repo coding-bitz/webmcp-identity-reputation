@@ -7,7 +7,7 @@ import { Lock, Mail, KeyRound, CheckCircle2, XCircle, RotateCcw, UserCheck, Shie
 interface AuthScreenProps {
   agents: AgentProfile[];
   activeAgentId: string;
-  onSelectAgent: (id: string) => void;
+  onSelectAgent?: (id: string) => void;
   onRequestOtp: () => void;
   isLoading: boolean;
 }
@@ -15,7 +15,6 @@ interface AuthScreenProps {
 export const AuthScreen: React.FC<AuthScreenProps> = ({
   agents,
   activeAgentId,
-  onSelectAgent,
   onRequestOtp,
   isLoading,
 }) => {
@@ -25,24 +24,6 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
     <div className="py-20 max-w-2xl mx-auto px-4 text-center animate-fade-in">
       <div className="p-8 sm:p-12 rounded-2xl bg-paper-2 border border-rule shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rule via-accent to-rule" />
-
-        {/* Agent Switcher */}
-        <div className="flex items-center justify-center gap-1.5 mb-8">
-          <span className="text-xs font-mono text-ink-2 mr-1">Target Agent:</span>
-          {agents.map((agent) => (
-            <button
-              key={agent.agentId}
-              onClick={() => onSelectAgent(agent.agentId)}
-              className={`px-3 py-1 text-xs font-mono rounded-md transition-all ${
-                activeAgentId === agent.agentId
-                  ? 'bg-accent text-accent-ink font-semibold shadow-sm'
-                  : 'bg-paper text-ink-2 hover:text-ink border border-rule'
-              }`}
-            >
-              {agent.name}
-            </button>
-          ))}
-        </div>
 
         {/* Icon & Landmark */}
         <div className="w-14 h-14 mx-auto rounded-full bg-paper-3 border border-rule flex items-center justify-center text-accent mb-5">
@@ -54,7 +35,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({
         </div>
 
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-ink mb-3">
-          Agent Detected. Waiting for authentication.
+          Authenticate
         </h2>
 
         <p className="text-sm text-ink-2 max-w-md mx-auto mb-6 leading-relaxed">
